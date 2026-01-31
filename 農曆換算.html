@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>農曆換算</title>
+  <link rel="icon" href="C:\Users\USER\Downloads\農曆換算\favicon.ico">
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+
+<style>
+  body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: linear-gradient(135deg, #EBD6D6, #C7C7E2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    text-align: center;
+    width: 520px;  
+  }
+
+  h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    color: #000000;
+    letter-spacing: 2px;
+  }
+
+  label {
+    font-size: 18px;
+    color: #333;
+  }
+
+  input {
+    font-size: 20px;
+    padding: 10px 14px;
+    width: 85%;
+    margin-top: 12px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74,144,226,0.4);
+  }
+
+  button {
+    font-size: 18px;
+    padding: 10px 22px;
+    margin: 18px 8px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4a90e2, #6fb1ff);
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  h3 {
+    margin-top: 25px;
+    margin-bottom: 8px;
+    color: #000000;
+  }
+
+  textarea {
+    font-size: 18px;
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    resize: none;
+  }
+</style>
+
+</head>
+
+<body>
+  <div class="container">
+    <h2>《 民國 → 農曆 》</h2><br>
+
+    <label>
+      輸入國曆生日（3或7碼）, 然後按 Enter：
+      <br>
+      <input type="text" id="input" placeholder="例如 0980306 或 088">
+    </label>
+
+    <div>
+      <button onclick="convert()">轉換</button>
+      <button onclick="copyResult()">一鍵複製</button>
+    </div>
+
+    <h3>Excel 用</h3>
+    <textarea id="result" rows="3"></textarea>
+  </div>
+
+  <script>
+    const inputEl = document.getElementById('input');
+    const resultEl = document.getElementById('result');
+
+    // Enter 鍵轉換
+    inputEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        convert();
+      }
+    });
+
+    function convert() {
+      const input = inputEl.value.trim();
+
+      if (!/^\d+$/.test(input)) {
+        alert("請只輸入數字");
+        return;
+      }
+
+      // ===== 情況 A：只有年份 =====
+      if (input.length === 3) {
+        const rocYear = parseInt(input);
+        const solarYear = rocYear + 1911;
+
+        const solar = Solar.fromYmd(solarYear, 2, 1);
+        const lunar = solar.getLunar();
+        const ganzhi = lunar.getYearInGanZhi();
+
+        resultEl.value = [
+          ganzhi,
+          "年",
+          "吉",
+          "月",
+          "吉",
+          "日"
+        ].join("\t");
+        return;
+      }
+
+      // ===== 情況 B：完整年月日 =====
+      if (input.length === 7) {
+        const rocYear = parseInt(input.substring(0, 3));
+        const month = parseInt(input.substring(3, 5));
+        const day = parseInt(input.substring(5, 7));
+
+        const solarYear = rocYear + 1911;
+
+        const solar = Solar.fromYmd(solarYear, month, day);
+        const lunar = solar.getLunar();
+
+        resultEl.value = [
+          lunar.getYearInGanZhi(),
+          "年",
+          lunar.getMonth(),
+          "月",
+          lunar.getDay(),
+          "日"
+        ].join("\t");
+        return;
+      }
+
+      alert("格式錯誤，請輸入 3 或 7 碼");
+    }
+
+    // 一鍵複製
+    function copyResult() {
+      if (!resultEl.value) {
+        alert("沒有可複製的內容");
+        return;
+      }
+     resultEl.select();
+     document.execCommand("copy");
+      // alert("已複製到剪貼簿！");
+    }
+  </script>
+</body>
+</html>

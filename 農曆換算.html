@@ -95,7 +95,7 @@
     <h2>《 民國 → 農曆 》</h2><br>
 
     <label>
-      輸入國曆生日（7或3碼）, 然後 按 Enter 或  <button onclick="convert()">轉換</button>
+      輸入國曆生日（7或3碼）, 然後 按 Enter  或  <button onclick="convert()">轉換</button>
       <br>
       <input type="text" id="input" placeholder="例如 0980306 或 088">
     </label>
@@ -133,18 +133,18 @@
         const rocYear = parseInt(input);
         const solarYear = rocYear + 1911;
 
-        const solar = Solar.fromYmd(solarYear, 2, 1);
-        const lunar = solar.getLunar();
-        const ganzhi = lunar.getYearInGanZhi();
+	const solar = Solar.fromYmd(solarYear, 3, 1); // 一定過立春
+	const lunar = solar.getLunar();
 
-        resultEl.value = [
-          ganzhi,
-          "年",
-          "吉",
-          "月",
-          "吉",
-          "日"
-        ].join("\t");
+	resultEl.value = [
+	  lunar.getYearInGanZhiByLiChun(),
+	  "年",
+	  "吉",
+	  "月",
+	  "吉",
+	  "日"
+	].join("\t");
+
         return;
       }
 
@@ -157,16 +157,18 @@
         const solarYear = rocYear + 1911;
 
         const solar = Solar.fromYmd(solarYear, month, day);
-        const lunar = solar.getLunar();
+	const lunar = solar.getLunar();
 
-        resultEl.value = [
-          lunar.getYearInGanZhi(),
-          "年",
-          lunar.getMonth(),
-          "月",
-          lunar.getDay(),
-          "日"
-        ].join("\t");
+	resultEl.value = [
+	  lunar.getYearInGanZhiByLiChun(),
+	  "年",
+	  lunar.getMonth(),
+	  "月",
+	  lunar.getDay(),
+	  "日"
+	].join("\t");
+
+
         return;
       }
 
